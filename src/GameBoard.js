@@ -12,6 +12,7 @@ class GameBoard extends Component {
     };
   }
 
+  // once component mounts
   componentDidMount() {
     fetch(BASE_URL + "games", {
       method: "POST",
@@ -19,29 +20,38 @@ class GameBoard extends Component {
     })
       .then(resp => resp.json())
       .then(newGame => {
-        this.setState = {
+        console.log("This works!", newGame);
+        // syntax for setState != this.state syntax
+        this.setState({
           game: newGame
-        };
+        });
       });
   }
 
   render() {
     return (
       <div>
-        {this.state.game.id}
-        {this.state.game.board.map((column, i) => {
-          console.log("x-coordinate", column, i);
-          return (
-            <div>
-              {column.map((row, j) => {
-                console.log("y-coordinate", column, j);
-                return (
-                  <span className="tile">{this.state.game.board[i][j]}</span>
-                );
-              })}
-            </div>
-          );
-        })}
+        <div>Game in play {this.state.game.id}</div>
+        <div className="board-tag">
+          {this.state.game.board.map((row, i) => {
+            console.log("x-coordinate", row, i);
+            console.log("row works");
+            return (
+              // 2nd div tag
+              <div>
+                {row.map((column, j) => {
+                  console.log("y-coordinate", column, j);
+                  console.log("column works");
+                  return (
+                    <span className="tile">{this.state.game.board[i][j]}</span>
+                  );
+                })}
+              </div>
+              //
+            );
+            return;
+          })}
+        </div>
       </div>
     );
   }
