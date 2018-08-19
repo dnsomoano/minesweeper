@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  color: black;
 }
 
 .App-logo {
@@ -24,11 +25,23 @@
 }
 
 .board-tag {
-  margin-top: 4em;
+  display: flex;
+  justify-content: center;
+  margin-top: 1em;
+  margin-left: 1em;
+  padding: 1em;
 }
 
+.box {
+  display: flex;
+  justify-content: center;
+  border: 0.1em solid black;
+  padding: 0.5em;
+}
+/* Padding will skew the table */
 .tile {
   border: 0.1em solid black;
-  padding: 2em;
+  padding: 0em;
   margin-top: 1em;
+  color: black;
 }

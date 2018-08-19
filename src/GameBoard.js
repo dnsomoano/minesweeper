@@ -34,22 +34,24 @@ class GameBoard extends Component {
         <div>Game in play {this.state.game.id}</div>
         <div className="board-tag">
           {this.state.game.board.map((row, i) => {
-            console.log("x-coordinate", row, i);
-            console.log("row works");
+            // console.log("x-coordinate", row, i);
+            console.log("there are", row.length);
             return (
               // 2nd div tag
               <div>
                 {row.map((column, j) => {
                   console.log("y-coordinate", column, j);
-                  console.log("column works");
+                  console.log("there are", column.length)
                   return (
-                    <span className="tile">{this.state.game.board[i][j]}</span>
+                    <span className="box">{this.state.game.board[i][j]} {`${i+1}, ${j+1}`}</span>
                   );
                 })}
               </div>
               //
             );
-            return;
+            // return (
+              // id={this.state.game.board[i]}
+            //
           })}
         </div>
       </div>
