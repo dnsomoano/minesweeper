@@ -11,6 +11,8 @@ class GameBoard extends Component {
       game: {
         board: []
       },
+      // counter for player moves
+      playerMove: 0,
       check: 0,
       flag: 0
     };
@@ -27,7 +29,7 @@ class GameBoard extends Component {
     })
       .then(resp => resp.json())
       .then(newGame => {
-        console.log("This works!", newGame);
+        console.log("Start of game!", newGame);
         // syntax for setState != this.state syntax
         this.setState({
           game: newGame
@@ -35,50 +37,83 @@ class GameBoard extends Component {
       });
   }
 
-  // Check handle a cell on right-click
-  checkCell = (event, i, j) => {
-    fetch(`${BASE_URL}games/${this.state.game.id}/check`, {
-      method: "POST",
+  // Retrieves an in-play board // TODO broken
+  getGameBoard = () => {
+    fetch(`${BASE_URL}games/${this.state.game.id}`, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ id:`${this.state.game.id}`, row: i, col: j })
+      body: JSON.stringify({ id: `${this.state.game.id}` })
     })
       .then(resp => resp.json())
-      .then(checks => {
-        console.log("This works!", checks);
-        // syntax for setState != this.state syntax
-        // TODO Append array of flags to game and increment flags Week 04 Day 3(for check) & 4(for game)... Wrap in if statement?
-        this.setState({
-          game: checks,
-          check: 1
+      .then(boardInPlay => {
+        // If state is equal to win -- show button and refresh game
+        // else if state equal lose -- show button and refresh game
+        this.state({
+          game: boardInPlay
         });
+        // dbg
+        console.log("retrieves board!", boardInPlay);
       });
+  };
+
+  // Check handle a cell on right-click
+  setCheck = (event, i, j) => {
+    if (this.state.check !== 0) {
+      this.getGameBoard(this.state.game.state); // FIX
+      this.setState({
+        playerMove: this.state.playerMove + 1,
+        check: this.state.check + 1
+      });
+      console.log("2nd check click works", this.state.check);
+    } else {
+      fetch(`${BASE_URL}games/${this.state.game.id}/check`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id: `${this.state.game.id}`, row: i, col: j })
+      })
+        .then(resp => resp.json())
+        .then(checksBoard => {
+          console.log("First check click works!", checksBoard);
+          // syntax for setState != this.state syntax
+          // TODO Append array of flags to game and increment flags Week 04 Day 3(for check) & 4(for game)... Wrap in if statement?
+          this.setState({
+            game: checksBoard,
+            playerMove: this.state.playerMove + 1,
+            check: 1
+          });
+        });
+    }
     console.log(`${this.state.game.id}`);
   };
 
   // Flag handle a cell on left-click
-  flagCell = (event, i, j) => {
+  setFlag = (event, i, j) => {
     fetch(`${BASE_URL}games/${this.state.game.id}/flag`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ id:`${this.state.game.id}`, row: i, col: j })
+      body: JSON.stringify({ id: `${this.state.game.id}`, row: i, col: j })
     })
       .then(resp => resp.json())
-      .then(flags => {
-        console.log("This works!", flags);
+      .then(flagsBoard => {
+        console.log("First flag fine!", flagsBoard);
         // syntax for setState !== this.state syntax
         this.setState({
-          // TODO Append array of flags to game and increment flags Week 04 Day 3(for flag) & 4(for game)
-          game: flags,
-          flag: 1
+          // TODO 4(for game)
+          game: flagsBoard,
+          playerMove: this.state.playerMove + 1,
+          flag: this.state.flag + 1
         });
       });
     console.log(`${this.state.game.id}`);
   };
 
+  // Renders page
   render() {
     return (
       <div>
@@ -89,8 +124,7 @@ class GameBoard extends Component {
           {this.state.game.mines} mines
         </div>
         <div>
-          # of checks: {this.state.check} + # of flags:{" "}
-          {this.state.flag}
+          # of checks: {this.state.check} + # of flags: {this.state.flag}
         </div>
         <div className="board-tag">
           {this.state.game.board.map((row, j) => {
@@ -105,8 +139,8 @@ class GameBoard extends Component {
                   return (
                     <span
                       className="box"
-                      onClick={this.checkCell}
-                      onContextMenu={this.flagCell}
+                      onClick={this.setCheck}
+                      onContextMenu={this.setFlag}
                     >
                       {this.state.game.board[i][j]} {`${""}`}
                     </span>
