@@ -7,7 +7,8 @@ class GameBoard extends Component {
     super(props);
     this.state = {
       game: {
-        board: []
+        board: [],
+        mines: 0
       }
     };
   }
@@ -16,6 +17,9 @@ class GameBoard extends Component {
   componentDidMount() {
     fetch(BASE_URL + "games", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
       body: JSON.stringify({ difficulty: 0 })
     })
       .then(resp => resp.json())
@@ -23,10 +27,18 @@ class GameBoard extends Component {
         console.log("This works!", newGame);
         // syntax for setState != this.state syntax
         this.setState({
-          game: newGame
+          game: newGame,
         });
       });
   }
+
+// <button onClick=""
+  // setMines =() => {
+  //   this.state = {
+  //     mines: {this.state.board.mines}
+  //   }
+  //   Math.random()
+  // }
 
   render() {
     return (
@@ -43,14 +55,14 @@ class GameBoard extends Component {
                   console.log("y-coordinate", column, j);
                   console.log("there are", column.length)
                   return (
-                    <span className="box">{this.state.game.board[i][j]} {`${i+1}, ${j+1}`}</span>
+                    <span className="box">{this.state.game.board[i][j]} {`${'" "'}`}</span>
                   );
                 })}
               </div>
               //
             );
             // return (
-              // id={this.state.game.board[i]}
+              // id={this.state.game.mines}
             //
           })}
         </div>

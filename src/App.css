@@ -35,8 +35,9 @@
 .box {
   display: flex;
   justify-content: center;
-  border: 0.1em solid black;
-  padding: 0.5em;
+  background-color: #BDBDBD;
+  border: 0.3em outset #7B7B7B;
+  padding: 1.2em;
 }
 /* Padding will skew the table */
 .tile {
