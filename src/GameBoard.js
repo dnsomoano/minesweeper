@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { start } from "pretty-error";
 // import Tile from './Tile';
 
 const BASE_URL = "https://minesweeper-api.herokuapp.com/";
@@ -8,11 +7,12 @@ class GameBoard extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      // game is an object with an array key value
       game: {
-        board: [],
-        check: 0,
-        flag: 0
-      }
+        board: []
+      },
+      check: 0,
+      flag: 0
     };
   }
 
@@ -34,46 +34,46 @@ class GameBoard extends Component {
         });
       });
   }
-  
+
   // Check handle a cell on right-click
-  checkCell = event => {
+  checkCell = (event, i, j) => {
     fetch(`${BASE_URL}games/${this.state.game.id}/check`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      // TODO edit stringify to take clicked row&col value i & j w/o falling out of scope
-      body: JSON.stringify({ row: 0, col: 2 })
+      body: JSON.stringify({ id:`${this.state.game.id}`, row: i, col: j })
     })
       .then(resp => resp.json())
-      // TODO edit promise so setState adds to checks
-      .then(playing => {
-        console.log("This works!", playing);
+      .then(checks => {
+        console.log("This works!", checks);
         // syntax for setState != this.state syntax
+        // TODO Append array of flags to game and increment flags Week 04 Day 3(for check) & 4(for game)... Wrap in if statement?
         this.setState({
-          game: playing
+          game: checks,
+          check: 1
         });
       });
     console.log(`${this.state.game.id}`);
   };
 
   // Flag handle a cell on left-click
-  flagCell = event => {
+  flagCell = (event, i, j) => {
     fetch(`${BASE_URL}games/${this.state.game.id}/flag`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      // TODO edit stringify to take clicked row&col value i & j w/o falling out of scope
-      body: JSON.stringify({ row: 0, col: 7 })
+      body: JSON.stringify({ id:`${this.state.game.id}`, row: i, col: j })
     })
       .then(resp => resp.json())
-      // TODO edit promise so setState adds to flags
-      .then(playing => {
-        console.log("This works!", playing);
-        // syntax for setState != this.state syntax
+      .then(flags => {
+        console.log("This works!", flags);
+        // syntax for setState !== this.state syntax
         this.setState({
-          game: playing
+          // TODO Append array of flags to game and increment flags Week 04 Day 3(for flag) & 4(for game)
+          game: flags,
+          flag: 1
         });
       });
     console.log(`${this.state.game.id}`);
@@ -88,19 +88,27 @@ class GameBoard extends Component {
           {"   "}
           {this.state.game.mines} mines
         </div>
+        <div>
+          # of checks: {this.state.check} + # of flags:{" "}
+          {this.state.flag}
+        </div>
         <div className="board-tag">
-          {this.state.game.board.map((row, i) => {
-            // console.log("x-coordinate", row, i);
-            console.log("there are", row.length);
+          {this.state.game.board.map((row, j) => {
+            // console.log("x-coordinate", row, j);
+            // console.log("there are", row.length);
             return (
               // 2nd div tag
               <div>
-                {row.map((column, j) => {
-                  console.log("y-coordinate", column, j);
-                  console.log("there are", column.length);
+                {row.map((column, i) => {
+                  // console.log("y-coordinate", column, i);
+                  // console.log("there are", column.length);
                   return (
-                    <span className="box" onClick={this.checkCell} onMouseDown={this.flagCell}>
-                      {this.state.game.board[i][j]} {`${''}`}
+                    <span
+                      className="box"
+                      onClick={this.checkCell}
+                      onContextMenu={this.flagCell}
+                    >
+                      {this.state.game.board[i][j]} {`${""}`}
                     </span>
                   );
                 })}
@@ -111,6 +119,7 @@ class GameBoard extends Component {
             // id={this.state.game.id}
           })}
         </div>
+        {/* Closing render div*/}
       </div>
     );
   }
