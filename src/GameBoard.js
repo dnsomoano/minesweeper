@@ -35,17 +35,18 @@ class GameBoard extends Component {
       });
   }
   
-  // Check a cell on right-click
+  // Check handle a cell on right-click
   checkCell = event => {
     fetch(`${BASE_URL}games/${this.state.game.id}/check`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      // TODO: edit stringify to take clicked row&col value i & j w/o falling out of scope
+      // TODO edit stringify to take clicked row&col value i & j w/o falling out of scope
       body: JSON.stringify({ row: 0, col: 2 })
     })
       .then(resp => resp.json())
+      // TODO edit promise so setState adds to checks
       .then(playing => {
         console.log("This works!", playing);
         // syntax for setState != this.state syntax
@@ -56,18 +57,18 @@ class GameBoard extends Component {
     console.log(`${this.state.game.id}`);
   };
 
-  // Flag a cell on left-click
+  // Flag handle a cell on left-click
   flagCell = event => {
     fetch(`${BASE_URL}games/${this.state.game.id}/flag`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      // TODO: edit stringify to take clicked row&col value i & j w/o falling out of scope
+      // TODO edit stringify to take clicked row&col value i & j w/o falling out of scope
       body: JSON.stringify({ row: 0, col: 7 })
     })
       .then(resp => resp.json())
-      // TODO: edit promise so setState adds flags
+      // TODO edit promise so setState adds to flags
       .then(playing => {
         console.log("This works!", playing);
         // syntax for setState != this.state syntax
