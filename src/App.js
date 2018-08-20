@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.jpg';
 import './App.css';
-import GameBoard from './GameBoard';
+import Minesweeper from './Minesweeper';
 
 class App extends Component {
   render() {
@@ -10,7 +10,7 @@ class App extends Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="minesweeper-logo" />
         </header>
-        <GameBoard />
+        <Minesweeper />
       </div>
     );
   }

@@ -3,7 +3,7 @@ import React, { Component } from "react";
 
 const BASE_URL = "https://minesweeper-api.herokuapp.com/";
 
-class GameBoard extends Component {
+class Minesweeper extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -56,12 +56,42 @@ class GameBoard extends Component {
         // dbg
         console.log("retrieves board!", boardInPlay);
       });
+    if (this.state.game.state === "lost") {
+      console.log("You Lose!");
+    } else if (this.state.game.state === "won") {
+      console.log("You Won!");
+    }
   };
+
+  // setGameBoard = () => {
+  //   fetch(`${BASE_URL}games/${this.state.game.id}`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json"
+  //     },
+  //     body: JSON.stringify({ id: `${this.state.game.id}` })
+  //   })
+  //     .then(resp => resp.json())
+  //     .then(boardInPlay => {
+  //       // If state is equal to win -- show button and refresh game
+  //       // else if state equal lose -- show button and refresh game
+  //       this.state({
+  //         game: boardInPlay
+  //       });
+  //       // dbg
+  //       console.log("retrieves board!", boardInPlay);
+  //     });
+  //   if (this.state.game.state === "lost") {
+  //     console.log("You Lose!");
+  //   } else if (this.state.game.state === "won") {
+  //     console.log("You Won!");
+  //   }
+  // };
 
   // Check handle a cell on right-click
   setCheck = (event, i, j) => {
     if (this.state.check !== 0) {
-      this.getGameBoard(this.state.game.state); // FIX
+      this.getGameBoard(); // FIX
       this.setState({
         playerMove: this.state.playerMove + 1,
         check: this.state.check + 1
@@ -76,40 +106,55 @@ class GameBoard extends Component {
         body: JSON.stringify({ id: `${this.state.game.id}`, row: i, col: j })
       })
         .then(resp => resp.json())
-        .then(checksBoard => {
-          console.log("First check click works!", checksBoard);
+        .then(newGame => {
+          console.log("First check click works!", newGame);
           // syntax for setState != this.state syntax
           // TODO Append array of flags to game and increment flags Week 04 Day 3(for check) & 4(for game)... Wrap in if statement?
           this.setState({
-            game: checksBoard,
+            game: newGame,
             playerMove: this.state.playerMove + 1,
             check: 1
           });
         });
+      if (this.state.game.state === "lost") {
+        console.log("You Lose!");
+      } else if (this.state.game.state === "won") {
+        console.log("You Won!");
+      }
     }
-    console.log(`${this.state.game.id}`);
+    // console.log(`${this.state.game.id}`);
+    console.log(this.state.playerMove);
   };
 
   // Flag handle a cell on left-click
   setFlag = (event, i, j) => {
-    fetch(`${BASE_URL}games/${this.state.game.id}/flag`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ id: `${this.state.game.id}`, row: i, col: j })
-    })
-      .then(resp => resp.json())
-      .then(flagsBoard => {
-        console.log("First flag fine!", flagsBoard);
-        // syntax for setState !== this.state syntax
-        this.setState({
-          // TODO 4(for game)
-          game: flagsBoard,
-          playerMove: this.state.playerMove + 1,
-          flag: this.state.flag + 1
-        });
+    if (this.state.flag !== 0) {
+      this.getGameBoard(); // FIX
+      this.setState({
+        playerMove: this.state.playerMove + 1,
+        flag: this.state.flag + 1
       });
+      console.log("2nd check click works", this.state.check);
+    } else {
+      fetch(`${BASE_URL}games/${this.state.game.id}/flag`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id: `${this.state.game.id}`, row: i, col: j })
+      })
+        .then(resp => resp.json())
+        .then(flagsBoard => {
+          console.log("First flag fine!", flagsBoard);
+          // syntax for setState !== this.state syntax
+          this.setState({
+            // TODO 4(for game)
+            game: flagsBoard,
+            playerMove: this.state.playerMove + 1,
+            flag: this.state.flag + 1
+          });
+        });
+    }
     console.log(`${this.state.game.id}`);
   };
 
@@ -138,6 +183,7 @@ class GameBoard extends Component {
                   // console.log("there are", column.length);
                   return (
                     <span
+                      // key={j}
                       className="box"
                       onClick={this.setCheck}
                       onContextMenu={this.setFlag}
@@ -159,4 +205,4 @@ class GameBoard extends Component {
   }
 }
 
-export default GameBoard;
+export default Minesweeper;
